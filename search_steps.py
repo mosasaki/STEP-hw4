@@ -149,22 +149,29 @@ def search_steps(user_relations_graph, from_user, to_user, user_data):
         tmp_list.extend(list(user_relations_graph.succ[queue[0]['index']]))
 
         tmp_index = 0
+        tmp_list.insert(0, -1)  # insert dummy in head
         end_tmp_list = len(tmp_list)
         while tmp_index < end_tmp_list:  # exclude overlapping index
-            if tmp_list[tmp_index] in queue:
-                tmp_list.pop(tmp_index)
-                end_tmp_list -= 1
-            else:
-                tmp_index += 1
+            for i in range(len(queue)):
+                if tmp_list[tmp_index] == queue[i]['index']:
+                    tmp_list.pop(tmp_index)
+                    end_tmp_list -= 1
+                    tmp_index -= 1
+
+            tmp_index += 1
+        tmp_list.pop(0)
 
         tmp_index = 0
+        tmp_list.insert(0, -1)  # insert dummy in head
         end_tmp_list = len(tmp_list)
-        while tmp_index < end_tmp_list:  # exclude already checked index
-            if tmp_list[tmp_index] in already_checked:
-                tmp_list.pop(tmp_index)
-                end_tmp_list -= 1
-            else:
-                tmp_index += 1
+        while tmp_index < end_tmp_list:  # exclude overlapping index
+            for i in range(len(already_checked)):
+                if tmp_list[tmp_index] == already_checked[i]['index']:
+                    tmp_list.pop(tmp_index)
+                    end_tmp_list -= 1
+                    tmp_index -= 1
+            tmp_index += 1
+        tmp_list.pop(0)
 
         tmp_list = add_count_steps(tmp_list)
         tmp_list = add_step(tmp_list, step)
@@ -178,9 +185,9 @@ def search_steps(user_relations_graph, from_user, to_user, user_data):
     exit(1)
 
 
-links_data = load_txt('.gitignore/links.txt')
+links_data = load_txt('links.txt')
 graph = create_graph(links_data)
-user_data = create_user_dictionary(load_txt('.gitignore/nicknames.txt'))
+user_data = create_user_dictionary(load_txt('nicknames.txt'))
 
 while True:
     print('from >')
