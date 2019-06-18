@@ -136,7 +136,13 @@ def search_steps(user_relations_graph, from_user, to_user, user_data):
     queue = []
     step = 1
     already_checked = []
-    queue.extend(list(user_relations_graph.succ[from_user]))
+
+    try:
+        queue.extend(list(user_relations_graph.succ[from_user]))
+    except KeyError:
+        print("The starting user does not follow anybody")
+        step = 0
+
     queue = add_count_steps(queue)
     tmp_list = queue
 
@@ -146,6 +152,7 @@ def search_steps(user_relations_graph, from_user, to_user, user_data):
                 return node['step']
 
         tmp_list = []  # reset tmp_list
+
         tmp_list.extend(list(user_relations_graph.succ[queue[0]['index']]))
 
         tmp_index = 0
@@ -189,6 +196,7 @@ links_data = load_txt('links.txt')
 graph = create_graph(links_data)
 user_data = create_user_dictionary(load_txt('nicknames.txt'))
 
+
 while True:
     print('from >')
     from_name = input().lower()
@@ -198,5 +206,7 @@ while True:
     to_index = search_index_from_name(user_data, to_name)
     steps = search_steps(graph, from_index, to_index, user_data)
     print("steps = %i" % steps)
+
+
 
 
